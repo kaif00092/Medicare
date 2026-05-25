@@ -1,79 +1,79 @@
-import http from 'http';
+import http from "http";
 
 // First register a user and get the cookie
 const registerData = JSON.stringify({
-  name: 'Test User',
-  email: 'testuser' + Date.now() + '@example.com',
-  password: 'Password1',
+  name: "Test User",
+  email: "testuser" + Date.now() + "@example.com",
+  password: "Password1",
 });
 
 const registerOptions = {
-  hostname: 'localhost',
+  hostname: "localhost",
   port: 4001,
-  path: '/api/auth/register',
-  method: 'POST',
+  path: "/api/auth/register",
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
-    'Content-Length': Buffer.byteLength(registerData),
+    "Content-Type": "application/json",
+    "Content-Length": Buffer.byteLength(registerData),
   },
 };
 
 const registerReq = http.request(registerOptions, (res) => {
-  console.log('Register status:', res.statusCode);
-  let body = '';
-  
-  res.on('data', (chunk) => {
+  console.log("Register status:", res.statusCode);
+  let body = "";
+
+  res.on("data", (chunk) => {
     body += chunk;
   });
-  
-  res.on('end', () => {
-    console.log('Register response:', body);
-    
+
+  res.on("end", () => {
+    console.log("Register response:", body);
+
     // Extract cookie from Set-Cookie header
-    const setCookie = res.headers['set-cookie'];
-    console.log('Set-Cookie headers:', setCookie);
-    
+    const setCookie = res.headers["set-cookie"];
+    console.log("Set-Cookie headers:", setCookie);
+
     // Now make the homeremedy request
     const remedyData = JSON.stringify({
-      symptoms: 'cough, fever, headache'
+      symptoms: "cough, fever, headache",
     });
-    
+
     const remedyOptions = {
-      hostname: 'localhost',
+      hostname: "localhost",
       port: 4001,
-      path: '/api/ai/homeremedies',
-      method: 'POST',
+      path: "/api/ai/homeremedies",
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(remedyData),
-        'Cookie': setCookie ? setCookie[0] : ''
+        "Content-Type": "application/json",
+        "Content-Length": Buffer.byteLength(remedyData),
+        Cookie: setCookie ? setCookie[0] : "",
       },
     };
-    
+
     const remedyReq = http.request(remedyOptions, (remedyRes) => {
-      console.log('Remedy status:', remedyRes.statusCode);
-      let remedyBody = '';
-      
-      remedyRes.on('data', (chunk) => {
+      console.log("Remedy status:", remedyRes.statusCode);
+      let remedyBody = "";
+
+      remedyRes.on("data", (chunk) => {
         remedyBody += chunk;
       });
-      
-      remedyRes.on('end', () => {
-        console.log('Remedy response:', remedyBody);
+
+      remedyRes.on("end", () => {
+        console.log("Remedy response:", remedyBody);
       });
     });
-    
-    remedyReq.on('error', (err) => {
-      console.error('Remedy request error:', err);
+
+    remedyReq.on("error", (err) => {
+      console.error("Remedy request error:", err);
     });
-    
+
     remedyReq.write(remedyData);
     remedyReq.end();
   });
 });
 
-registerReq.on('error', (err) => {
-  console.error('Register request error:', err);
+registerReq.on("error", (err) => {
+  console.error("Register request error:", err);
 });
 
 registerReq.write(registerData);

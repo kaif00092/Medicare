@@ -37,8 +37,8 @@ app.get("/api/health", (req, res) => {
       gemini_api_key_set: !!process.env.GEMINI_API_KEY,
       mongo_uri_set: !!process.env.MONGO_URI,
       port: port,
-      client_url: CLIENT_URL
-    }
+      client_url: CLIENT_URL,
+    },
   });
 });
 

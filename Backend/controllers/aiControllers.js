@@ -95,7 +95,10 @@ Disclaimer:
 
     console.log("HomeRemedy - calling generateGeminiResponse");
     const remedy = await generateGeminiResponse(prompt);
-    console.log("HomeRemedy - remedy generated:", remedy ? remedy.substring(0, 100) + "..." : null);
+    console.log(
+      "HomeRemedy - remedy generated:",
+      remedy ? remedy.substring(0, 100) + "..." : null,
+    );
 
     if (!remedy) {
       return res.status(500).json({
