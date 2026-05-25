@@ -9,7 +9,7 @@ import cors from "cors";
 
 const app = express();
 const port = process.env.PORT || 5000;
-const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
+const CLIENT_URL = process.env.CLIENT_URL || "https://medicare-rmg3.onrender.com";
 
 app.use(express.json());
 app.use(cookieParser());
