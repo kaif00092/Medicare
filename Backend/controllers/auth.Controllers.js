@@ -41,8 +41,8 @@ export const register = async (req, res) => {
     res.cookie("jwt", token, {
       httpOnly: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      sameSite: "strict",
-      secure: false,
+      sameSite: "None",
+      secure: true,
     });
 
     res.status(201).json({ message: "User created successfully", data: user });
@@ -76,8 +76,8 @@ export const login = async (req, res) => {
     res.cookie("jwt", token, {
       httpOnly: true,
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      sameSite: "strict",
-      secure: false,
+      sameSite: "None",
+      secure: true,
     });
     const must_onboard = !userExist.is_onboarded;
     res.status(201).json({
