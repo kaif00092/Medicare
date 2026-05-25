@@ -4,6 +4,8 @@ import { generateGeminiResponse } from "../services/geminiServices.js";
 export const getHomeRemedy = async (req, res) => {
   try {
     const { symptoms } = req.body;
+    console.log("HomeRemedy request - symptoms:", symptoms);
+    console.log("HomeRemedy request - user:", req.user);
 
     if (!symptoms) {
       return res.status(400).json({
@@ -12,6 +14,7 @@ export const getHomeRemedy = async (req, res) => {
     }
 
     const user = await User.findById(req.user._id);
+    console.log("HomeRemedy - user found:", user);
 
     if (!user) {
       return res.status(404).json({
@@ -27,6 +30,7 @@ export const getHomeRemedy = async (req, res) => {
       conditions: user.conditions || [],
       allergies: user.allergies || [],
     };
+    console.log("HomeRemedy - profile:", profile);
 
     const prompt = `
 You are a safe healthcare assistant.
@@ -89,9 +93,18 @@ When to See Doctor:
 Disclaimer:
 `;
 
+    console.log("HomeRemedy - calling generateGeminiResponse");
     const remedy = await generateGeminiResponse(prompt);
+    console.log("HomeRemedy - remedy generated:", remedy ? remedy.substring(0, 100) + "..." : null);
 
-    const parseRemedy = (text) => {
+    if (!remedy) {
+      return res.status(500).json({
+        message: "Failed to generate AI response",
+      });
+    }
+
+    const parseRemedy = (text = "") => {
+      console.log("parseRemedy - input text length:", text.length);
       const sections = {
         possibleReason: "",
         safeRemedies: [],
@@ -102,6 +115,7 @@ Disclaimer:
       };
 
       const lines = text.split("\n");
+      console.log("parseRemedy - number of lines:", lines.length);
       let currentSection = null;
 
       for (let line of lines) {
@@ -150,16 +164,19 @@ Disclaimer:
         }
       }
 
+      console.log("parseRemedy - parsed sections:", sections);
       return sections;
     };
 
     const parsedRemedy = parseRemedy(remedy);
+    console.log("HomeRemedy - final response:", parsedRemedy);
 
     res.status(200).json({
       message: "Home remedy generated successfully",
       remedy: parsedRemedy,
     });
   } catch (error) {
+    console.log("AI Home Remedy Error:", error);
     res.status(500).json({
       message: "AI home remedy error",
       error: error.message,

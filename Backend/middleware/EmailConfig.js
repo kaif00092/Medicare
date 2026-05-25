@@ -1,12 +1,14 @@
 import nodemailer from "nodemailer";
 
-// Create a test account or replace with real credentials.
+const EMAIL_USER = process.env.EMAIL_USER;
+const EMAIL_PASS = process.env.EMAIL_PASS;
+
 export const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false, // true for 465, false for other ports
+  host: process.env.EMAIL_HOST || "smtp.gmail.com",
+  port: Number(process.env.EMAIL_PORT) || 587,
+  secure: process.env.EMAIL_SECURE === "true",
   auth: {
-    user: "kaifarshad07@gmail.com",
-    pass: "kxlw rukh deco shid",
+    user: EMAIL_USER,
+    pass: EMAIL_PASS,
   },
 });

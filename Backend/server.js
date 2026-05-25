@@ -9,16 +9,37 @@ import cors from "cors";
 
 const app = express();
 const port = process.env.PORT || 5000;
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(
+  cors({
+    origin: [CLIENT_URL, "http://localhost:5173"],
+    credentials: true,
+  }),
+);
 app.use("/api/auth", authRouter);
 app.use("/api/ai", airouter);
 app.use("/api/reports", reportRoutes);
 
 app.get("/", (req, res) => {
   res.send("hello");
+});
+
+// Diagnostic endpoint
+app.get("/api/health", (req, res) => {
+  res.json({
+    status: "ok",
+    environment: {
+      jwt_secret_set: !!process.env.JWT_SECRET,
+      gemini_url_set: !!process.env.GEMINI_URL,
+      gemini_api_key_set: !!process.env.GEMINI_API_KEY,
+      mongo_uri_set: !!process.env.MONGO_URI,
+      port: port,
+      client_url: CLIENT_URL
+    }
+  });
 });
 
 app.listen(port, () => {

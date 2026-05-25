@@ -1,0 +1,16 @@
+services:
+  - type: web_service
+    name: medicare-backend
+    env: node
+    plan: free
+    branch: main
+    buildCommand: cd Backend && npm install
+    startCommand: cd Backend && npm start
+
+  - type: static_site
+    name: medicare-frontend
+    env: static
+    plan: free
+    branch: main
+    buildCommand: cd frontend && npm install && npm run build
+    publishPath: frontend/dist
